@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "@notionhq/client": "^0.2.0",
+    "dotenv": "^10.0.0",
+    "googleapis": "^80.0.0"
+  },
+  "scripts": {
+    "start": "node index"
+  },
+  "license": "MIT"
+}
