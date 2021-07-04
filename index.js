@@ -14,7 +14,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/hook", (req, res) => {
-  console.log(JSON.stringify(req.body)); // Call your action on the request here
+  console.log(JSON.stringify(req)); // Call your action on the request here
   res.status(200).end(); // Responding is important
 });
 
