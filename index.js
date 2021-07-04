@@ -1,43 +1,18 @@
-const notion = require("./lib/notion");
-const getCalendarEvents = require("./lib/google");
+// Require express and body-parser
+const express = require("express");
+const bodyParser = require("body-parser");
 
-//format Google Calendar event into the format Notion expects
-//and only send event end time if there is one on the GCal one
-const formatNotionEvent = (event) => {
-  const formattedEvent = {
-    title: event.summary,
-    id: event.id,
-    start: event.start,
-    description: event.description ? event.description : ""
-  };
+// Initialize express and define a port
+const app = express();
+const PORT = 3000;
 
-  event.end ? (formattedEvent.end = event.end) : null;
+// Tell express to use body-parser's JSON parsing
+app.use(bodyParser.json());
 
-  return formattedEvent;
-};
+app.post("/hook", (req, res) => {
+  console.log(req.body); // Call your action on the request here
+  res.status(200).end(); // Responding is important
+});
 
-const syncNotionToGoogle = (googleEvents, dictionary) => {
-  //iterate through events; for each one, update or create a Notion event
-  googleEvents.forEach((event) => {
-    dictionary[event.id]
-      ? notion.updateEvent(formatNotionEvent(event), dictionary[event.id])
-      : notion.createEvent(formatNotionEvent(event));
-  });
-};
-
-(async () => {
-  //get a dictionary that maps Google calendar IDs to Notion calendar IDs
-  const dictionary = await notion.getEventDictionary();
-
-  //set the range of dates to fetch from Google calendar
-  const nowDate = new Date();
-  const oldDate = new Date();
-  oldDate.setDate(oldDate.getDate() - 10);
-
-  //fetch events from Google calendar
-  const googleEvents = await getCalendarEvents(oldDate, nowDate);
-
-  syncNotionToGoogle(googleEvents, dictionary);
-})();
-
-//notion.getDatabase() can be used to get the database id or property ids
+// Start express on the defined port
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
