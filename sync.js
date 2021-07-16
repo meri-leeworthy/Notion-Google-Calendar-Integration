@@ -8,7 +8,8 @@ const formatNotionEvent = (event) => {
     title: event.summary,
     id: event.id,
     start: event.start,
-    description: event.description ? event.description : ""
+    status: event.status,
+    description: event.description ? event.description : "",
   };
 
   event.end ? (formattedEvent.end = event.end) : null;
@@ -25,20 +26,26 @@ const syncNotionToGoogle = (googleEvents, dictionary) => {
   });
 };
 
-(async () => {
-  //get a dictionary that maps Google calendar IDs to Notion calendar IDs
+module.exports = async function bigSync() {
+  //get a dictionary that maps Google calendar IDs to Notion calendar ID
   const dictionary = await notion.getEventDictionary();
 
   //set the range of dates to fetch from Google calendar
-  const nowDate = new Date();
+  const newDate = new Date();
+  newDate.setDate(newDate.getDate() + 90);
   const oldDate = new Date();
-  oldDate.setDate(oldDate.getDate() - 10);
+  oldDate.setDate(oldDate.getDate() - 90);
 
   //fetch events from Google calendar
-  const googleEvents = await getCalendarEvents(oldDate, nowDate);
+  const { nextSyncToken, googleEvents } = await getCalendarEvents(
+    oldDate,
+    newDate
+  );
 
+  // console.log(googleEvents);
+  console.log(`nextSyncToken: ${nextSyncToken}`);
   syncNotionToGoogle(googleEvents, dictionary);
-})();
+};
 
 //notion.getDatabase() can be used to get the database id or property ids
 
