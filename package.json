@@ -7,6 +7,9 @@
     "googleapis": "^80.0.0",
     "path": "^0.12.7"
   },
+  "engines": {
+    "node": ">=14"
+  },
   "scripts": {
     "start": "node index"
   },
